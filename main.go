@@ -2,7 +2,6 @@ package main
 
 import (
 	"bwa-startup/user"
-	"fmt"
 	"log"
 
 	"gorm.io/driver/mysql"
@@ -16,10 +15,19 @@ func main()  {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	var users []user.User
-	db.Find(&users)
-	for _, user := range users {
-		fmt.Println(user.Name)
-		fmt.Println(user.Email)
-	}
+
+	userRepository := user.NewRepository(db)
+	userService := user.NewService(userRepository)
+	
+	userInput := user.RegisterUserInput{}
+	userInput.Name = "Test Simpan dari service"
+	userInput.Email = "contoh@gmail.com"	
+	userInput.Occupation = "anak"
+	userInput.Password = "password"
+
+	userService.RegisterUser(userInput)
+	// user := user.User{
+	// 	Name: "Test Simpan",
+	// }
+	// userRepository.Save(user)
 }
