@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bwa-startup/helper"
 	"bwa-startup/user"
 	"net/http"
 
@@ -17,15 +18,20 @@ func NewUserHandler(userService user.Service) *userHandler {
 
 func (h *userHandler) RegisterUser(c *gin.Context){
 	var input user.RegisterUserInput
+	response := helper.APIResponse
+	responseBadRequest := response("Bad Request!",http.StatusBadRequest,"error",nil)
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil{
-		c.JSON(http.StatusBadRequest, nil)
+		c.JSON(http.StatusBadRequest, responseBadRequest)
 	}
 
-	user, err := h.userService.RegisterUser(input)
+	newUser, err := h.userService.RegisterUser(input)
 	if err != nil{
-		c.JSON(http.StatusBadRequest, nil)
+		c.JSON(http.StatusBadRequest, responseBadRequest)
 	}
-	c.JSON(http.StatusOK, user)
+
+	// token, err := h.JSONToken(c)
+	formatter :=  user.FormatUser(newUser, "tokenya")
+	c.JSON(http.StatusOK, response("Register Success", http.StatusCreated, "success", formatter))
 }
