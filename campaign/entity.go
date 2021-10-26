@@ -14,14 +14,15 @@ type Campaign struct {
 	CurrentAmount    int
 	Slug             string
 	CreatedAt        time.Time
-	UpdatedAt time.Time
+	UpdatedAt        time.Time
+	CampaignImages   []CampaignImage
 }
 
 type CampaignImage struct {
-	ID int
+	ID         int
 	CampaignID int
-	FileName string
-	IsPrimary int
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	FileName   string
+	IsPrimary  int
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
