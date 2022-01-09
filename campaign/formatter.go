@@ -4,7 +4,7 @@ import "strings"
 
 type CampaignFormatter struct {
 	ID               int    `json:"id"`
-	UserId           int    `json:"user_id"`
+	UserID           int    `json:"user_id"`
 	Name             string `json:"name"`
 	Slug             string `json:"slug"`
 	ShortDescription string `json:"short_description"`
@@ -17,7 +17,7 @@ type CampaignFormatter struct {
 func FormatCampaign(campaign Campaign) CampaignFormatter {
 	formatter := CampaignFormatter{
 		ID:               campaign.ID,
-		UserId:           campaign.UserId,
+		UserID:           campaign.UserID,
 		Name:             campaign.Name,
 		Slug:             campaign.Slug,
 		ShortDescription: campaign.ShortDescription,
@@ -78,7 +78,7 @@ func FormatCampaignDetail(campaign Campaign) CampaignDetailFormatter {
 		ImageUrl:         "",
 		GoalAmount:       campaign.GoalAmount,
 		CurrentAmount:    campaign.CurrentAmount,
-		UserID:           campaign.UserId,
+		UserID:           campaign.UserID,
 		Slug:             campaign.Slug,
 		Perks:            strings.Split(campaign.Perks, ","),
 	}

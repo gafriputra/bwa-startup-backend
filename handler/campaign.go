@@ -3,6 +3,7 @@ package handler
 import (
 	"bwa-startup/campaign"
 	"bwa-startup/helper"
+	"bwa-startup/user"
 	"net/http"
 	"strconv"
 
@@ -18,9 +19,9 @@ func NewCampaignHandler(service campaign.Service) *campaignHandler {
 }
 
 func (h *campaignHandler) GetCampaigns(c *gin.Context) {
-	userID, _ := strconv.Atoi(c.Query("user_id"))
+	UserID, _ := strconv.Atoi(c.Query("user_id"))
 
-	campaigns, err := h.service.GetCampaigns(userID)
+	campaigns, err := h.service.GetCampaigns(UserID)
 	if err != nil {
 		response := helper.APIResponse("Error to get campaigns", http.StatusBadRequest, "error", err.Error())
 		c.JSON(http.StatusBadRequest, response)
@@ -57,4 +58,28 @@ func (h *campaignHandler) GetCampaign(c *gin.Context) {
 	response := helper.APIResponse("Success get campaign detail", http.StatusOK, "success", campaign.FormatCampaignDetail(campaignDetail))
 	c.JSON(http.StatusOK, response)
 
+}
+
+func (h *campaignHandler) CreateCampaign(c *gin.Context) {
+	var input campaign.CreateCampaignInput
+	response := helper.APIResponse
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		c.JSON(http.StatusBadRequest, response("Bad Request!", http.StatusUnprocessableEntity, "error", errorMessage))
+		return
+	}
+
+	input.User = c.MustGet("currentUser").(user.User)
+
+	newCampaign, err := h.service.CreateCampaign(input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response("Failed Create Campaign!", http.StatusBadRequest, "error", err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, response("Success Create Campaign!", http.StatusOK, "success", campaign.FormatCampaign(newCampaign)))
 }

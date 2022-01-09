@@ -44,6 +44,7 @@ func main() {
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
 
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
+	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
 
 	router.Run()
@@ -81,8 +82,8 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 			return
 		}
 
-		userID := int(claim["user_id"].(float64))
-		user, err := userService.GetUserByID(userID)
+		UserID := int(claim["user_id"].(float64))
+		user, err := userService.GetUserByID(UserID)
 
 		if err != nil {
 			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "User not found", nil)
