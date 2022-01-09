@@ -7,6 +7,7 @@ import (
 type Repository interface {
 	FindAll() ([]Campaign, error)
 	FindByUserID(userID int) ([]Campaign, error)
+	FindByID(ID int) (Campaign, error)
 }
 
 type repository struct {
@@ -29,4 +30,11 @@ func (r *repository) FindByUserID(userID int) ([]Campaign, error) {
 
 	err := r.db.Where("user_id = ?", userID).Preload("CampaignImages", "campaign_images.is_primary = 1").Find(&campaigns).Error
 	return campaigns, err
+}
+
+func (r *repository) FindByID(ID int) (Campaign, error) {
+	var campaign Campaign
+
+	err := r.db.Where("id = ?", ID).Preload("CampaignImages").Preload("User").Find(&campaign).Error
+	return campaign, err
 }
